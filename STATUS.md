@@ -193,7 +193,10 @@ Custom provider).
 ## Quality gates
 
 - CI (`.github/workflows/ci.yml`) runs `gofmt`, `go build`, `go vet`,
-  `go test ./... -race`, and `golangci-lint` on every push/PR.
+  `go test ./... -race`, and `golangci-lint` on every push/PR. The two paced
+  input diagnostics (`TestReaderScrollEventQueueDrain`,
+  `TestComposeBackspaceQueueDrain`) run in their own step without `-race`, which
+  keeps the race run well inside its 20-minute limit.
 - Lint config in `.golangci.yml`; `golangci-lint` runs clean and is enforced in CI.
 - The tree currently builds clean, vets clean, and the full test suite passes.
 

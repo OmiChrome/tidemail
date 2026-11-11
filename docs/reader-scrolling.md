@@ -22,7 +22,10 @@ Fixture construction and initial layout are excluded from the reported run time.
 Logs include mean/p95/p99 Update, View, combined cycle and arrival-to-view
 latency, total elapsed time, and post-release Update and final-view drain.
 Percentiles use nearest rank; with 60 samples p99 is the largest sample.
-`-short` skips the paced diagnostic. On a controlled performance runner,
+`-short` skips the paced diagnostic. CI runs it in its own step without the race
+detector, because under `-race` it is about six times slower (roughly 3.5 minutes
+instead of 35 seconds on a 4-core machine); the same assertions apply. A plain
+`go test ./... -race` still includes it. On a controlled performance runner,
 `TIDEMAIL_READER_PERF_LIMITS=1` additionally enforces a 20 ms p95 cycle and 50 ms
 final-view drain for 30 Hz cases. These timing limits are opt-in to avoid noisy CI
 failures; input counts and navigation assertions always apply.

@@ -52,8 +52,16 @@ jobs:
       # The race detector needs cgo, which ubuntu-latest provides via gcc.
       - name: Test
         # The UI package has over a thousand tests; its race run can exceed
-        # Go's default 10-minute per-package limit on hosted runners.
-        run: go test ./... -race -timeout 20m
+        # Go's default 10-minute per-package limit on hosted runners. The two
+        # paced input diagnostics take over a third of that run under the race
+        # detector, so they run in the next step instead.
+        run: go test ./... -race -timeout 20m -skip '^(TestReaderScrollEventQueueDrain|TestComposeBackspaceQueueDrain)$'
+
+      # Same tests, same assertions (every event delivered, every navigation
+      # state matching a sequential run), just without the race detector's
+      # slowdown.
+      - name: Test input diagnostics
+        run: go test ./internal/ui -run '^(TestReaderScrollEventQueueDrain|TestComposeBackspaceQueueDrain)$' -count=1
 
       - name: Interactive CLI smoke test
         run: |
